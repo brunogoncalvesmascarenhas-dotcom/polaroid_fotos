@@ -6,7 +6,7 @@ import { defineConfig } from 'vite';
 // então o "base" precisa bater com o nome do repo, senão os arquivos
 // CSS/JS não vão carregar (erro 404 silencioso é o sintoma clássico).
 export default defineConfig({
-  base: '/polaroid_upload/',
+  base: '/polaroid_fotos/',
   build: {
     outDir: 'dist',
     emptyOutDir: true
