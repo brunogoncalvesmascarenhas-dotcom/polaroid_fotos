@@ -4,7 +4,7 @@
 
 export const CONFIG = {
   APPS_SCRIPT_URL:
-    'https://script.google.com/macros/s/AKfycbwG3QGD3JSswvDFqjyHv0xfURJ2mTAj5ORZZW8MHZuS6_lmh66avvUzu6-RLWZMSq8/exec',
+    'https://script.google.com/macros/s/AKfycbwDMS_QfF0JI-N3V8d28a6xdA6F7yywSPQN8xc1bYlExCWvkqiVQpYP8NOYSAlnmlY/exec',
 
   MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
   ACCEPTED_MIME_PREFIX: 'image/',
