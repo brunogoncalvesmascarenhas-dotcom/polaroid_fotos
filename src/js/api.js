@@ -20,8 +20,23 @@ function fileToBase64(file) {
 export async function submitOrder({ orderCode, product, contact, files }) {
   const filesData = await Promise.all(files.map(fileToBase64));
 
-  const response = await fetch(CONFIG.APPS_SCRIPT_URL, {
+  // IMPORTANTE: o Google Apps Script, quando implantado como Web App,
+  // não envia o cabeçalho 'Access-Control-Allow-Origin' nas respostas.
+  // Isso significa que o navegador bloqueia a LEITURA da resposta
+  // (mesmo que o servidor já tenha processado tudo com sucesso).
+  //
+  // Por isso usamos mode: 'no-cors' aqui: a requisição é enviada e o
+  // Apps Script roda normalmente do lado do Google, mas não temos
+  // acesso ao conteúdo da resposta (nem ao status real) — o navegador
+  // sempre devolve um objeto "opaco". Por isso não dá para checar
+  // response.ok ou ler response.json() aqui.
+  //
+  // Trade-off aceito: perdemos a confirmação granular de erros vindos
+  // do Apps Script (ex: "orderCode ausente"), mas ganhamos o envio
+  // funcionando sem precisar de um proxy/backend intermediário.
+  await fetch(CONFIG.APPS_SCRIPT_URL, {
     method: 'POST',
+    mode: 'no-cors',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify({
       orderCode,
@@ -31,9 +46,7 @@ export async function submitOrder({ orderCode, product, contact, files }) {
     })
   });
 
-  if (!response.ok) {
-    throw new Error('Erro HTTP ' + response.status);
-  }
-
-  return response;
+  // Como a resposta é opaca, assumimos sucesso se o fetch não lançou
+  // erro de rede (ex: sem internet, URL inválida, etc.).
+  return true;
 }
