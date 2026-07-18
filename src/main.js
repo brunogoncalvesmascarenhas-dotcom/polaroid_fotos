@@ -68,7 +68,14 @@ function init() {
         orderCode: orderCodeInput.value.trim(),
         product: productSelect.value,
         contact: contactInput.value.trim(),
-        files
+        files,
+        onProgress: (loteAtual, totalLotes) => {
+          // Só faz sentido mostrar progresso quando há mais de um lote
+          // (pedidos pequenos continuam indo numa única requisição).
+          if (totalLotes > 1) {
+            submitBtn.innerHTML = `<span>⏳</span> Enviando ${loteAtual}/${totalLotes}...`;
+          }
+        }
       });
 
       toast.show('Imagens enviadas com sucesso!');

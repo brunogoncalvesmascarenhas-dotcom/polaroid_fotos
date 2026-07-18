@@ -17,8 +17,37 @@ function fileToBase64(file) {
   });
 }
 
-export async function submitOrder({ orderCode, product, contact, files }) {
-  const filesData = await Promise.all(files.map(fileToBase64));
+// Divide os arquivos em lotes menores antes de enviar. Necessário porque
+// o Apps Script tem limite de tamanho de requisição e de tempo de
+// execução — mandar 50-100 fotos numa chamada só facilmente estoura os
+// dois. Cada lote respeita um teto de bytes (fotos variam de peso) e
+// também um teto de quantidade (evita muitas requisições quando os
+// arquivos são pequenos).
+function makeBatches(files) {
+  const batches = [];
+  let current = [];
+  let currentBytes = 0;
+
+  files.forEach(file => {
+    const excedeBytes = currentBytes + file.size > CONFIG.MAX_BATCH_BYTES;
+    const excedeQtd = current.length >= CONFIG.MAX_BATCH_FILES;
+
+    if (current.length > 0 && (excedeBytes || excedeQtd)) {
+      batches.push(current);
+      current = [];
+      currentBytes = 0;
+    }
+
+    current.push(file);
+    currentBytes += file.size;
+  });
+
+  if (current.length) batches.push(current);
+  return batches;
+}
+
+async function sendBatch({ orderCode, product, contact, batch }) {
+  const filesData = await Promise.all(batch.map(fileToBase64));
 
   // IMPORTANTE: o Google Apps Script, quando implantado como Web App,
   // não envia o cabeçalho 'Access-Control-Allow-Origin' nas respostas.
@@ -45,8 +74,20 @@ export async function submitOrder({ orderCode, product, contact, files }) {
       files: filesData
     })
   });
+}
 
-  // Como a resposta é opaca, assumimos sucesso se o fetch não lançou
-  // erro de rede (ex: sem internet, URL inválida, etc.).
+// onProgress(loteAtual, totalLotes) é opcional — usado pela UI para
+// mostrar "Enviando lote 2/7..." em vez de travar sem feedback durante
+// pedidos grandes.
+export async function submitOrder({ orderCode, product, contact, files, onProgress }) {
+  const batches = makeBatches(files);
+
+  for (let i = 0; i < batches.length; i++) {
+    await sendBatch({ orderCode, product, contact, batch: batches[i] });
+    if (onProgress) onProgress(i + 1, batches.length);
+  }
+
+  // Como a resposta de cada lote é opaca, assumimos sucesso se nenhum
+  // fetch lançou erro de rede (ex: sem internet, URL inválida, etc.).
   return true;
 }
