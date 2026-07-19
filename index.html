@@ -18,11 +18,11 @@
         </div>
 
         <form id="uploadForm" novalidate>
-            <!-- Código da compra (obrigatório) -->
+            <!-- Número do pedido (obrigatório) -->
             <div class="form-group">
-                <label for="orderCode">Código da compra <span class="required">*</span></label>
-                <input type="text" id="orderCode" class="input-text" placeholder="Ex: SHOP-1234" required>
-                <span class="hint">Código recebido no e-mail ou na plataforma.</span>
+                <label for="orderCode">Número do pedido <span class="required">*</span></label>
+                <input type="text" id="orderCode" class="input-text" placeholder="Ex: 1234" required>
+                <span class="hint">Número recebido no e-mail ou na plataforma.</span>
             </div>
 
             <!-- Produto (obrigatório) -->
@@ -46,7 +46,7 @@
                 <div class="upload-wrapper" id="dropZone">
                     <span class="upload-icon">🖼️</span>
                     <p><strong>Toque ou arraste</strong> suas fotos aqui</p>
-                    <span class="file-types">JPG, PNG, WEBP · até 10MB cada</span>
+                    <span class="file-types">JPG, PNG, WEBP</span>
                     <input type="file" id="fileInput" accept="image/*" multiple>
                 </div>
                 <div id="fileList" class="file-list"></div>

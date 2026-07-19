@@ -6,7 +6,6 @@ export const CONFIG = {
   APPS_SCRIPT_URL:
     'https://script.google.com/macros/s/AKfycbxGlFNlWkDQDR49wIwIkw7PxjnkwikeRuO1YXG34DQjKc4aKhJSyd7LnAeqAQBiXW92hA/exec',
 
-  MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
   ACCEPTED_MIME_PREFIX: 'image/',
 
   // Envio em lotes: necessário porque o Google Apps Script tem limite de

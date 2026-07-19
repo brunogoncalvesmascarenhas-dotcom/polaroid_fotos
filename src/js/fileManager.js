@@ -68,15 +68,10 @@ export function createFileManager({ fileInput, dropZone, fileListEl, toast, onCh
     const incoming = Array.from(fileArray);
     const accepted = [];
     let rejectedType = false;
-    let rejectedSize = false;
 
     incoming.forEach(file => {
       if (!file.type.startsWith(CONFIG.ACCEPTED_MIME_PREFIX)) {
         rejectedType = true;
-        return;
-      }
-      if (file.size > CONFIG.MAX_FILE_SIZE) {
-        rejectedSize = true;
         return;
       }
       const isDuplicate = selectedFiles.some(
@@ -90,8 +85,6 @@ export function createFileManager({ fileInput, dropZone, fileListEl, toast, onCh
 
     if (rejectedType) {
       toast.show('Apenas arquivos de imagem são aceitos.', true);
-    } else if (rejectedSize) {
-      toast.show('Algumas imagens passam de 10MB e foram ignoradas.', true);
     }
   }
 
